@@ -10,6 +10,7 @@ namespace Dijkstra.NET.Graph
     public class Graph<T, TEdgeCustom>: IDijkstraGraph, IPageRankGraph, IGraph<T, TEdgeCustom>, IEnumerable<INode<T, TEdgeCustom>> where TEdgeCustom : IEquatable<TEdgeCustom>
     {
         private readonly IDictionary<uint, Node<T, TEdgeCustom>> _nodes = new Dictionary<uint, Node<T, TEdgeCustom>>();
+        private Dictionary<uint, HashSet<Node<T, TEdgeCustom>>> _nodesChildren = new Dictionary<uint, HashSet<Node<T, TEdgeCustom>>>();
 
         /// <summary>
         /// Add node to graph
@@ -47,6 +48,15 @@ namespace Dijkstra.NET.Graph
         }
 
         /// <summary>
+        /// Remove a node from graph
+        /// </summary>
+        /// <param name="key">Node key</param>
+        public void RemoveNode(uint key)
+        {
+            removeNode(key);
+        }
+
+        /// <summary>
         /// Connect node from with node to
         /// (from)-[cost, custom]->(to)
         /// </summary>
@@ -65,6 +75,13 @@ namespace Dijkstra.NET.Graph
 
             nodeTo.AddParent(nodeFrom);
             nodeFrom.AddEdge(new Edge<T, TEdgeCustom>(nodeTo, cost, custom));
+
+            if (!_nodesChildren.ContainsKey(from))
+            {
+                _nodesChildren.Add(from, new HashSet<Node<T, TEdgeCustom>>());
+            }
+
+            _nodesChildren[from].Add(nodeTo);
 
             return true;
         }
@@ -100,6 +117,25 @@ namespace Dijkstra.NET.Graph
                 throw new InvalidOperationException("Node have to be unique.", new Exception("The same key of node."));
 
             _nodes.Add(key, new Node<T, TEdgeCustom>(key, item, this));
+        }
+
+        protected void removeNode(uint key)
+        {
+            if (!_nodes.ContainsKey(key))
+            {
+                return;
+            }
+
+
+            if (_nodesChildren.ContainsKey(key))
+            {
+                foreach (Node<T, TEdgeCustom> children in _nodesChildren[key])
+                {
+                    children.RemoveParent(_nodes[key]);
+                }
+            }
+
+            _nodes.Remove(key);
         }
 
         Action<Edge> IDijkstraGraph.this[uint node] => _nodes[node].EachEdge;
