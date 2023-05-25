@@ -13,7 +13,6 @@ namespace Dijkstra.NET.ShortestPath
             var d = new Dictionary<uint, int> { [to] = 0 };
             var current = new HashSet<uint>();
 
-
             Dictionary<string, object?> innerDict = new Dictionary<string, object?>();
             innerDict.Add("parent", null);
             innerDict.Add("distance", 0);
@@ -47,7 +46,6 @@ namespace Dijkstra.NET.ShortestPath
                         }
 
                         var distanceDict = new Dictionary<string, object> { ["parent"] = u, ["distance"] = Distance(u) + cost };
-                        //distance.Add(node, distanceDict);
                         distance[node] = distanceDict;
 
                         q.Add(node);
@@ -55,7 +53,6 @@ namespace Dijkstra.NET.ShortestPath
                     }
                 });
             } while (q.Count > 0);
-
 
             return distance;
         }

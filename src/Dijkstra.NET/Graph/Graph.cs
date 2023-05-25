@@ -10,7 +10,7 @@ namespace Dijkstra.NET.Graph
     public class Graph<T, TEdgeCustom>: IDijkstraGraph, IPageRankGraph, IGraph<T, TEdgeCustom>, IEnumerable<INode<T, TEdgeCustom>> where TEdgeCustom : IEquatable<TEdgeCustom>
     {
         private readonly IDictionary<uint, Node<T, TEdgeCustom>> _nodes = new Dictionary<uint, Node<T, TEdgeCustom>>();
-        private Dictionary<uint, HashSet<Node<T, TEdgeCustom>>> _nodesChildren = new Dictionary<uint, HashSet<Node<T, TEdgeCustom>>>();
+        private readonly Dictionary<uint, HashSet<Node<T, TEdgeCustom>>> _nodesChildren = new Dictionary<uint, HashSet<Node<T, TEdgeCustom>>>();
 
         /// <summary>
         /// Add node to graph
@@ -125,7 +125,6 @@ namespace Dijkstra.NET.Graph
             {
                 return;
             }
-
 
             if (_nodesChildren.ContainsKey(key))
             {
